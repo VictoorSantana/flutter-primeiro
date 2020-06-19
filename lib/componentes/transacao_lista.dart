@@ -4,13 +4,14 @@ import 'package:intl/intl.dart';
 
 class TransacaoLista extends StatelessWidget {
   final List<Transacao> transacoes;
+  final void Function(String) emRemocao;
 
-  TransacaoLista(this.transacoes);
+  TransacaoLista(this.transacoes, this.emRemocao);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height / 2,
+      height: MediaQuery.of(context).size.height - 250,
       child: transacoes.isEmpty
           ? Column(
               children: <Widget>[
@@ -38,38 +39,30 @@ class TransacaoLista extends StatelessWidget {
               itemBuilder: (ctx, index) {
                 final tr = transacoes[index];
                 return Card(
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 2,
-                        )),
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          'R\$ ${tr.valor.toStringAsFixed(2)}',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Theme.of(context).primaryColorDark),
+                  elevation: 5,
+                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.all(1),
+                        child: FittedBox(
+                          child: Text(tr.valor.toString()),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(tr.titulo,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text(
-                            DateFormat('d MMM y').format(tr.data),
-                            style: TextStyle(color: Colors.grey[250]),
-                          )
-                        ],
-                      )
-                    ],
+                    ),
+                    title: Text(
+                      tr.titulo,
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    subtitle: Text(
+                      DateFormat('d MMM y').format(tr.data),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      color: Theme.of(context).errorColor,
+                      onPressed: () => emRemocao(tr.id),
+                    ),
                   ),
                 );
               },

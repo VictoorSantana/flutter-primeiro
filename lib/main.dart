@@ -17,7 +17,15 @@ class ExpensesApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         fontFamily: 'Montserrat',
-      ),
+        textTheme: (
+          ThemeData.light().textTheme.copyWith(
+            button: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold
+            )
+          ) 
+        )
+      ),            
     );
   }
 }
@@ -28,26 +36,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transacao> _transacoes = [
-    Transacao(
-      id: 't0',
-      titulo: 'Monitor novo',
-      valor: 350.50,
-      data: DateTime.now().subtract(Duration(days: 33)),
-    ),
-    Transacao(
-      id: 't1',
-      titulo: 'Novo Tênis de Corrida',
-      valor: 310.76,
-      data: DateTime.now().subtract(Duration(days: 3)),
-    ),
-    Transacao(
-      id: 't2',
-      titulo: 'Conta de luz',
-      valor: 211.30,
-      data: DateTime.now().subtract(Duration(days: 4)),
-    ),
-  ];
+  final List<Transacao> _transacoes = [ ];
 
   _abrirModalTransacao(BuildContext context) {
     showModalBottomSheet(
@@ -66,13 +55,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }  
 
-  _adicionarTransacao(String titulo, double valor) {
+  _adicionarTransacao(String titulo, double valor, DateTime data) {
     print('_adicionarTransacao');
     final novaTransacao = Transacao(
       id: new Random().nextDouble().toString(),
       titulo: titulo,
       valor: valor,
-      data: DateTime.now(),
+      data: data,
     );
 
     setState(() {
@@ -80,6 +69,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     Navigator.of(context).pop(); //fecha o modal
+  }
+
+  _removerTransacao(String id) {
+    setState(() {
+      _transacoes.removeWhere((tr) => tr.id == id);
+    });
   }
 
   @override
@@ -99,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Grafico(_transacoesRecentes),
-            TransacaoLista(_transacoes),
+            TransacaoLista(_transacoes, _removerTransacao),
           ],
         ),
       ),

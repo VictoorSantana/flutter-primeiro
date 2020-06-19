@@ -27,14 +27,11 @@ class Grafico extends StatelessWidget {
         }
       }
 
-      //print(DateFormat.E().format(diaDaSemana)[0]);
-      //print(somaTotal);
-
       return {
         'dia': DateFormat.E().format(diaDaSemana)[0],
         'valor': somaTotal,
       };
-    });
+    }).reversed.toList();
   }
 
   double get _somaTotalDaSemana {
@@ -47,18 +44,25 @@ class Grafico extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
-      margin: EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: transacoesAgrupadas.map((tr) {
-          return Flexible(
-            child: GraficoBarra(
-              rotulo: tr['dia'],
-              valor: tr['valor'],
-              porcentual: (tr['valor'] as double) / _somaTotalDaSemana,
-            ),
-          );
-        }).toList(),
+      margin: EdgeInsets.symmetric(
+        vertical: 8,
+        horizontal: 5
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: transacoesAgrupadas.map((tr) {
+            return Flexible(
+              fit: FlexFit.tight,            
+              child: GraficoBarra(
+                rotulo: tr['dia'],
+                valor: tr['valor'],
+                porcentual: _somaTotalDaSemana > 0 ?  ((tr['valor'] as double) / _somaTotalDaSemana) : 0,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
